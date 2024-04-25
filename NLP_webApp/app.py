@@ -23,13 +23,36 @@ def perform_registration():
 
     response=dbo.insert(name,email,password)
     if response:
-        return render_template('login.html',message="registration complete kindly login now") #this is for opening login but
-    #with extra info or message
+        return render_template('login.html',message="registration complete kindly login now") 
     else:
         return render_template('register.html',message='regsitration not done email already exist')
 
+@app.route('/perform_login',methods=['post'])
+def perform_login():
+    email=request.form.get('user_ka_email')
+    password=request.form.get('user_ka_password')
+    response=dbo.search(email,password)
+    if response:
+        session['logged_in'] = 1
+        return redirect('/profile')
+    else:
+        return render_template('login.html',message='login unsuccessful try again')
 
+@app.route('/profile')
+def profile():
+    if session:
+        return render_template('profile.html')
+    else:
+        return redirect('/')
+    
 
+@app.route('/ner')
+def ner():
+    if session:
+        return render_template('ner.html')
+    else:
+        return redirect('/')
+    
 
 
 app.run(debug=True)
